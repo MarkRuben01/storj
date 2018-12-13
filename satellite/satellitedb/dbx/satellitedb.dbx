@@ -45,3 +45,20 @@ read one (
   select irreparabledb 
   where  irreparabledb.segmentpath = ?
 )
+
+model injuredsegment (
+	key path
+
+	field path text
+
+	field info blob
+)
+
+create injuredsegment ( )
+read first (
+	select injuredsegment
+)
+read limitoffset (
+	select injuredsegment
+)
+delete injuredsegment ( where injuredsegment.path = ? )
