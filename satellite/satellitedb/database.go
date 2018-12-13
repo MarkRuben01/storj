@@ -11,6 +11,7 @@ import (
 	"storj.io/storj/pkg/datarepair/irreparable"
 	"storj.io/storj/pkg/utils"
 	dbx "storj.io/storj/satellite/satellitedb/dbx"
+	"storj.io/storj/storage"
 )
 
 var (
@@ -62,10 +63,10 @@ func (db *DB) BandwidthAgreement() bwagreement.DB {
 // 	return &overlayCacheDB{db: db.db}
 // }
 
-// // RepairQueueDB is a getter for RepairQueueDB repository
-// func (db *DB) RepairQueueDB() queue.DB {
-// 	return &repairQueueDB{db: db.db}
-// }
+// RepairQueueDB is a getter for RepairQueueDB repository
+func (db *DB) RepairQueueDB() storage.Queue {
+	return &repairQueueDB{db: db.db}
+}
 
 // // AccountingDB is a getter for AccountingDB repository
 // func (db *DB) AccountingDB() accounting.DB {
