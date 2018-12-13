@@ -47,9 +47,7 @@ read one (
 )
 
 model injuredsegment (
-	key path
-
-	field path text
+	key info
 
 	field info blob
 )
@@ -61,4 +59,4 @@ read first (
 read limitoffset (
 	select injuredsegment
 )
-delete injuredsegment ( where injuredsegment.path = ? )
+delete injuredsegment ( where injuredsegment.info = ? )
