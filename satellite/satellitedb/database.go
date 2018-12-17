@@ -9,9 +9,9 @@ import (
 	"storj.io/storj/internal/migrate"
 	"storj.io/storj/pkg/bwagreement"
 	"storj.io/storj/pkg/datarepair/irreparable"
+	"storj.io/storj/pkg/datarepair/queue"
 	"storj.io/storj/pkg/utils"
 	dbx "storj.io/storj/satellite/satellitedb/dbx"
-	"storj.io/storj/storage"
 )
 
 var (
@@ -64,7 +64,7 @@ func (db *DB) BandwidthAgreement() bwagreement.DB {
 // }
 
 // RepairQueueDB is a getter for RepairQueueDB repository
-func (db *DB) RepairQueueDB() storage.Queue {
+func (db *DB) RepairQueueDB() queue.RepairQueue {
 	return &repairQueueDB{db: db.db}
 }
 
