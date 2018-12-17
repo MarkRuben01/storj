@@ -92,8 +92,13 @@ func (pool *ConnectionPool) disconnect(id storj.NodeID) error {
 
 // Dial connects to the node with the given ID and Address returning a gRPC Node Client
 func (pool *ConnectionPool) Dial(ctx context.Context, n *pb.Node) (pb.NodesClient, error) {
-	id := n.Id
+	id, err := storj.NodeIDFromBytes(n.Id)
+	if err != nil {
+		return nil, Error.Wrap(err)
+	}
+	
 	pool.mu.Lock()
+
 	conn, ok := pool.items[id]
 	if !ok {
 		conn = NewConn(n.GetAddress().Address)

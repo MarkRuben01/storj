@@ -3,7 +3,10 @@
 
 package pb
 
-import "storj.io/storj/pkg/storj"
+import (
+	"storj.io/storj/pkg/utils"
+	"storj.io/storj/pkg/storj"
+)
 
 // NodeIDsToLookupRequests converts NodeIDs to LookupRequests
 func NodeIDsToLookupRequests(nodeIDs storj.NodeIDList) *LookupRequests {
@@ -26,14 +29,19 @@ func LookupResponsesToNodes(responses *LookupResponses) []*Node {
 }
 
 // NodesToIDs extracts Node-s into a list of ids
-func NodesToIDs(nodes []*Node) storj.NodeIDList {
+func NodesToIDs(nodes []*Node) (storj.NodeIDList, error) {
 	ids := make(storj.NodeIDList, len(nodes))
+	errs := make([]error, len(nodes))
+	var err error
 	for i, node := range nodes {
 		if node != nil {
-			ids[i] = node.Id
+			ids[i], err = storj.NodeIDFromBytes(node.Id)
+			if err != nil {
+				errs[i] = err
+			}
 		}
 	}
-	return ids
+	return ids, utils.CombineErrors(errs...)
 }
 
 // CopyNode returns a deep copy of a node
@@ -41,7 +49,7 @@ func NodesToIDs(nodes []*Node) storj.NodeIDList {
 // with gogo's customtype extension.
 // (see https://github.com/gogo/protobuf/issues/147)
 func CopyNode(src *Node) (dst *Node) {
-	node := Node{Id: storj.NodeID{}}
+	node := Node{Id: []byte{}}
 	copy(node.Id[:], src.Id[:])
 	if src.Address != nil {
 		node.Address = &NodeAddress{

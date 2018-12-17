@@ -82,10 +82,13 @@ func (s *StatDB) Create(ctx context.Context, createReq *pb.CreateRequest) (resp 
 	}
 
 	node := createReq.Node
-
+	id, err := storj.NodeIDFromBytes(node.Id)
+	if err != nil {
+		return nil, Error.Wrap(err)
+	}
 	dbNode, err := s.DB.Create_Node(
 		ctx,
-		dbx.Node_Id(node.Id.Bytes()),
+		dbx.Node_Id(id.Bytes()),
 		dbx.Node_AuditSuccessCount(auditSuccessCount),
 		dbx.Node_TotalAuditCount(totalAuditCount),
 		dbx.Node_AuditSuccessRatio(auditSuccessRatio),

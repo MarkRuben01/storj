@@ -54,6 +54,6 @@ func fit(b []byte) []byte {
 func MockNode(s string) *pb.Node {
 	id := NodeIDFromString(s)
 	var node pb.Node
-	node.Id = id
+	node.Id = id.Bytes()
 	return &node
 }

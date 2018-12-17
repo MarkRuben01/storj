@@ -50,7 +50,11 @@ func (transport *Transport) DialNode(ctx context.Context, node *pb.Node, opts ..
 	}
 
 	// add ID of node we are wanting to connect to
-	dialOpt, err := transport.identity.DialOption(node.Id)
+	id, err := storj.NodeIDFromBytes(node.Id)
+	if err != nil {
+		return nil, err
+	}
+	dialOpt, err := transport.identity.DialOption(id)
 	if err != nil {
 		return nil, err
 	}

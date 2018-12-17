@@ -10,6 +10,7 @@ import (
 
 	"storj.io/storj/pkg/dht"
 	"storj.io/storj/pkg/pb"
+	"storj.io/storj/pkg/storj"
 )
 
 // Server implements the grpc Node Server
@@ -40,7 +41,11 @@ func (server *Server) Query(ctx context.Context, req *pb.QueryRequest) (*pb.Quer
 			if err != nil {
 				server.log.Error("could not respond to connection failed", zap.Error(err))
 			}
-			server.log.Error("connection to node failed", zap.Error(err), zap.String("nodeID", req.Sender.Id.String()))
+			senderID, err := storj.NodeIDFromBytes(req.Sender.Id)
+			if err != nil {
+				server.log.Error("could not convert sender id", zap.Error(err))
+			}
+			server.log.Error("connection to node failed", zap.Error(err), zap.String("nodeID", senderID.String()))
 		}
 
 		err = rt.ConnectionSuccess(req.Sender)
@@ -48,8 +53,8 @@ func (server *Server) Query(ctx context.Context, req *pb.QueryRequest) (*pb.Quer
 			server.log.Error("could not respond to connection success", zap.Error(err))
 		}
 	}
-
-	nodes, err := rt.FindNear(req.Target.Id, int(req.Limit))
+	targetID, err := storj.NodeIDFromBytes(req.Target.Id)
+	nodes, err := rt.FindNear(targetID, int(req.Limit))
 	if err != nil {
 		return &pb.QueryResponse{}, NodeClientErr.New("could not find near %server", err)
 	}
